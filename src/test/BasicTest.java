@@ -2,8 +2,7 @@ package test;
 
 import util.*;
 import java.util.concurrent.TimeUnit;
-import game.Player;
-import game.Table;
+import game.*;
 
 public class BasicTest {
 
@@ -21,13 +20,14 @@ public class BasicTest {
 //		System.out.println(deck);
 //		System.out.println(deck.cardsRemaining());
 		Player[] players = {new Player("Mike"), new Player("Joe"), new Player("Cole")};
-		Table table = new Table(4, 5, 10, 3, players);
+		Table table = new Table(4, 5, 10, 1, players);
+		boolean play = true;
 
-		while(true){
+		while(play){
 			try {
 				table.deal();
-			}catch(Exception e){
-				System.out.println("End of Shoe");
+			}catch(EndOfShoeException e){
+				System.err.println(e);
 				break;
 			}
 			System.out.println(table);
@@ -35,8 +35,5 @@ public class BasicTest {
 			table.clear();
 			TimeUnit.SECONDS.sleep(1);
 		}
-
-
 	}
-
 }
