@@ -6,18 +6,17 @@ import util.Card;
 public class Player {
 	public ArrayList<Card> hand;
 	public String name;
+	public int chipCount, currentBet;
 
 	public Player(String name){
 		this.hand = new ArrayList<Card>();
 		this.name = name;
+		this.chipCount = 25;
+		this.currentBet = 0;
 	}
 
 	public void clearHand(){
 		this.hand = new ArrayList<Card>();
-	}
-
-	public String toString(){
-		return name + ":" + hand.toString() + ", Value: " + getValue();
 	}
 
 	public int getValue(){
@@ -28,5 +27,9 @@ public class Player {
 		}
 
 		return handValue;
+	}
+
+	public String toString(){
+		return name + ":" + hand.toString() + ", Value: " + getValue() + ", Chips: " + this.chipCount;
 	}
 }
