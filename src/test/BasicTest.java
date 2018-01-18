@@ -3,37 +3,39 @@ package test;
 import util.*;
 import java.util.concurrent.TimeUnit;
 import game.*;
+import java.util.Scanner;
 
 public class BasicTest {
 
 	public static void main(String[] args) throws InterruptedException {
-//		Deck deck = new Deck(1);
-//
-//		System.out.println(deck);
-//		deck.shuffle();
-//		System.out.println(deck);
-//
-//		System.out.println(deck.cardsRemaining());
-//		Card c = deck.draw();
-//		System.out.println(c);
-//		System.out.println(c.value);
-//		System.out.println(deck);
-//		System.out.println(deck.cardsRemaining());
-		Player[] players = {new Player("Mike"), new Player("Joe"), new Player("Cole")};
-		Table table = new Table(4, 5, 10, 1, players);
-		boolean play = true;
 
-		while(play){
+		Player[] players = {new Player("Mike"), new Player("Joe"), new Player("Cole")};
+		Table table = new Table(players.length, 5, 10, 1, players);
+		int hands = 0, shuffleCount = 0;
+		Scanner input = new Scanner(System.in);
+		String play = "";
+
+		while(true){
 			try {
 				table.deal();
+				System.out.println(table.toString(true));
+				table.evaluate(input);
 			}catch(EndOfShoeException e){
-				System.err.println(e);
-				break;
+				System.out.println("End of Shoe, shuffling. Shuffled " + shuffleCount + " times.");
+				table.shuffleDeck();
+				shuffleCount++;
 			}
-			System.out.println(table);
 
 			table.clear();
-			TimeUnit.SECONDS.sleep(1);
+			hands++;
+			System.out.println("Play Again? (y/n)");
+			play = input.next();
+			if(play.contains("n")){
+				break;
+			}
 		}
+
+		System.out.println("End of Game.");
+		input.close();
 	}
 }
