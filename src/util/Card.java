@@ -3,7 +3,7 @@ package util;
 public class Card {
 	public int number, value;
 	public char suit;
-	
+
 	public Card(int number ,char suit){
 		this.number = number;
 		this.suit = suit;
@@ -15,8 +15,19 @@ public class Card {
 			this.value = number;
 		}
 	}
-	
+
 	public String toString(){
-		return Integer.toString(this.number)+ suit;
+		switch(Integer.valueOf(this.number)){
+			case 11:
+				return "J" + suit;
+			case 12:
+				return "Q" + suit;
+			case 13:
+				return "K" + suit;
+			case 1:
+				return "A" + suit;
+			default:
+				return Integer.toString(this.number)+ suit;
+		}
 	}
 }

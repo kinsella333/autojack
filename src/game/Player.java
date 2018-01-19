@@ -30,6 +30,6 @@ public class Player {
 	}
 
 	public String toString(){
-		return name + ":" + hand.toString() + ", Value: " + getValue() + ", Chips: " + this.chipCount;
+		return name + ":" + hand;
 	}
 }

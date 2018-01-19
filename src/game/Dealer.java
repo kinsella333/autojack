@@ -28,6 +28,6 @@ public class Dealer {
 		if(first){
 			return "Dealer:" + hand.get(1);
 		}
-		return "Dealer:" + hand.toString() + ", Value: " + getValue();
+		return "Dealer:" + hand;
 	}
 }

@@ -15,7 +15,7 @@ public class BasicTest {
 		players.add(new Player("Joe"));
 		players.add(new Player("Cole"));
 
-		Table table = new Table(5, 10, 1, players);
+		Table table = new Table(1, players);
 		int hands = 0, shuffleCount = 0;
 		Scanner input = new Scanner(System.in);
 		String play = "";
@@ -24,7 +24,6 @@ public class BasicTest {
 			try {
 				table.deal();
 				System.out.println(table.toString(true));
-				table.takeBets(input);
 				table.evaluate(input);
 			}catch(EndOfShoeException e){
 				System.out.println("End of Shoe, shuffling. Shuffled " + shuffleCount + " times.");

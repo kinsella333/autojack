@@ -6,7 +6,7 @@ import java.util.Collections;
 public class Deck {
 	public ArrayList<Card> deck;
 	public int deckNumber;
-	
+
 	public Deck(int deckNumber){
 		deck = new ArrayList<Card>();
 		for(int k = 0; k < deckNumber; k++){
@@ -31,19 +31,15 @@ public class Deck {
 		}
 		Collections.shuffle(this.deck);
 	}
-	
+
 	public void shuffle(){
 		Collections.shuffle(this.deck);
 	}
-	
-	public String toString(){
-		return this.deck.toString();
-	}
-	
+
 	public int cardsRemaining(){
 		return this.deck.size();
 	}
-	
+
 	public Card draw(){
 		if(this.deck.size() > 0){
 			return this.deck.remove(0);
@@ -51,6 +47,8 @@ public class Deck {
 			return null;
 		}
 	}
+
+	public String toString(){
+		return this.deck.toString();
+	}
 }
-
-
