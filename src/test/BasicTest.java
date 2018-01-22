@@ -11,11 +11,11 @@ public class BasicTest {
 	public static void main(String[] args) throws InterruptedException {
 
 		ArrayList<Player> players = new ArrayList<Player>();
-		players.add(new Player("Mike"));
-		players.add(new Player("Joe"));
-		players.add(new Player("Cole"));
+		// players.add(new Player("Mike"));
+		// players.add(new Player("Joe"));
+		players.add(new BookAI("Cole"));
 
-		Table table = new Table(1, players);
+		Table table = new Table(5, players);
 		int hands = 0, shuffleCount = 0;
 		Scanner input = new Scanner(System.in);
 		String play = "";
