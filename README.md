@@ -1,6 +1,5 @@
 # Autojack
 
-##To Run
-'''
-java -jar autojack.jar
-'''
+## To Run
+
+* java -jar autojack.jar
