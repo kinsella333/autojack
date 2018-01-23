@@ -12,16 +12,18 @@ public class BasicTest {
 
 		ArrayList<Player> players = new ArrayList<Player>();
 		// players.add(new Player("Mike"));
-		// players.add(new Player("Joe"));
+		players.add(new Player("Joe"));
 		players.add(new BookAI("Cole"));
 
-		Table table = new Table(5, players);
+		Table table = new Table(2, 100, 5, players);
 		int hands = 0, shuffleCount = 0;
 		Scanner input = new Scanner(System.in);
 		String play = "";
 
 		while(true){
 			try {
+				table.takeBets(input);
+
 				table.deal();
 				System.out.println(table.toString(true));
 				table.evaluate(input);

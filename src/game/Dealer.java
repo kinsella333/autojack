@@ -25,9 +25,7 @@ public class Dealer {
 				flag = true;
 				temp = handValue.size();
 				aCount++;
-				for(int j = 0; j < temp; j++){
-					handValue.add(0);
-				}
+				handValue.add(0);
 			}
 		}
 
@@ -37,10 +35,10 @@ public class Dealer {
 
 		if(flag){
 			for(int i = 1; i <= aCount; i++){
-				temp = temp + (aCount-i)*11 + i;
-				handValue.set(aCount, handValue.get(aCount) + temp);
+				temp = (aCount-i)*11 + i;
+				handValue.set(i, handValue.get(i) + temp);
 				for(int j = 0; j < this.hand.size(); j++){
-					if(this.hand.get(j).value != 11) handValue.set(aCount, handValue.get(aCount) + this.hand.get(j).value);
+					if(this.hand.get(j).value != 11) handValue.set(i, handValue.get(i) + this.hand.get(j).value);
 				}
 			}
 		}

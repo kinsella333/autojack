@@ -2,8 +2,7 @@ package game;
 
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
-import util.Deck;
+import util.*;
 
 public class Table {
 	public ArrayList<Player> players;
@@ -14,7 +13,7 @@ public class Table {
 
 	public Table(int minBet, int maxBet, int numDecks, ArrayList<Player> players){
 		this.numPlayers = players.size();
-		if(numPlayers > 1 && numPlayers < 7){
+		if(numPlayers > 0 && numPlayers < 7){
 			deck = new Deck(numDecks);
 			dealer = new Dealer();
 
@@ -59,7 +58,7 @@ public class Table {
 		this.deck = new Deck(this.numDecks);
 	}
 
-	public void evaluate(Scanner input) throws InterruptedException{
+	public void evaluate(Scanner input){
 		String choice = "";
 		int value = 0, dValue = 1000;
 		Player p;
@@ -74,7 +73,7 @@ public class Table {
 				p = this.players.get(i);
 				choice = "";
 				boolean stay = false;
-				if(checkBust(i)) continue;
+				if(checkBust(i) == 1) continue;
 
 				if(checkBlackjack(i)){
 					System.out.println(players.get(i).name + " got a Blackjack!");
@@ -102,7 +101,7 @@ public class Table {
 
 						if(choice.equals("h") || (choice.equals("d") && maxBet == 0)){
 							hit(i);
-							if(checkBust(i)) stay = true;
+							if(checkBust(i) == 1) stay = true;
 							break;
 						}else if(choice.equals("s")){
 							stay = true;
@@ -111,42 +110,45 @@ public class Table {
 							if(choice.equals("d") && maxBet != 0){
 								if(p.chipCount >= p.currentBet){
 									hit(i);
-									p.currentBet = p.currentBet*2;
+									this.players.get(i).currentBet = p.currentBet*2;
+									this.players.get(i).chipCount = this.players.get(i).chipCount - p.currentBet;
+									stay = true;
 								}else{
 									System.out.println("Not enough chips to double");
 									continue;
 								}
-								if(checkBust(i)) stay = true;
+								if(checkBust(i) == 1) stay = true;
 								break;
 							}else if(choice.equals("spl") && p.hand.get(0).number == p.hand.get(1).number){
 								if(p.chipCount >= p.currentBet) {
 									handleSplit(i);
-									p.currentBet = p.currentBet*2;
+									this.players.get(i).currentBet = p.currentBet*2;
 									break;
 								}else System.out.println("Not enough chips to split");
 							}else System.out.println("Cards must be equal to split");
 						}else System.out.println("Not a legal input.");
 					}
+			 }
+			 vList = p.getValue();
+			 if(vList.size() > 1){
+				 System.out.print(p + " Value: ");
+				 for(int k = 0; k < vList.size()-1; k++) System.out.print(vList.get(k) + " or ");
+				 System.out.println(vList.get(vList.size() - 1));
+			 }else System.out.println(p + " Value: " + vList.get(0));
+		 }
 
-				vList = p.getValue();
-				if(vList.size() > 1){
-					System.out.print(p + " Value: ");
-					for(int k = 0; k < vList.size()-1; k++) System.out.print(vList.get(k) + " or ");
-					System.out.println(vList.get(vList.size() - 1));
-				}else System.out.println(p + " Value: " + vList.get(0));
-			}
-
+		 //Check dealer and hit hand
 			ArrayList<Integer> dList = this.dealer.getValue();
-			//Check dealer and hit hand
 			if(dList.size() > 1){
-				System.out.print(this.dealer.toString(false) + " Value: ");
+				System.out.print("\n" + this.dealer.toString(false) + " Value: ");
 				for(int k = 0; k < dList.size()-1; k++) System.out.print(dList.get(k) + " or ");
 				System.out.println(dList.get(dList.size() - 1));
 			}
-			else System.out.println(this.dealer.toString(false) + " Value: " + dList.get(0));
+			else System.out.println("\n" + this.dealer.toString(false) + " Value: " + dList.get(0));
 
-			while(!checkBust(-1)){
-				TimeUnit.SECONDS.sleep(2);
+			while((dValue = checkBust(-1)) < 22){
+
+				if((dValue = checkDone(-1)) > 2) break;
 				dealer.hand.add(this.deck.draw());
 
 				dList = this.dealer.getValue();
@@ -155,8 +157,6 @@ public class Table {
 					for(int i = 0; i < dList.size()-1; i++) System.out.print(dList.get(i) + " or ");
 					System.out.println(dList.get(dList.size() - 1));
 				}else System.out.println(this.dealer.toString(false) + " Value: " + dList.get(0));
-
-				if((dValue = checkDone(-1)) >= 0) break;
 			}
 
 			if(dValue > 21) System.out.println("\nDealer Busts!");
@@ -165,18 +165,11 @@ public class Table {
 			//Check winning hands
 			System.out.println("-----------------------------------");
 			for(int i = 0; i < this.numPlayers; i++){
-				p = this.players.get(i);
 				value = checkDone(i);
 
-				if(value <= 21 && (value > dValue || dValue > 21)){
-					payout(i, false);
-					System.out.println(p.name + " wins with " + p.hand + " Value: " + value);
-				}else if(value <= 21 && value == dValue){
-					payout(i, true);
-					System.out.println(p.name + " pushes with " + p.hand + " Value: " + value);
-				}else{
-					System.out.println(p.name + " loses with " + p.hand + " Value: " + value);
-				}
+				if(value <= 21 && (value > dValue || dValue > 21)) i = payout(i, 1, value);
+				else if(value <= 21 && value == dValue) i = payout(i, 2, value);
+				else i = payout(i, -1, value);
 			}
 			System.out.println("-----------------------------------\n");
 		}
@@ -186,11 +179,11 @@ public class Table {
 		this.players.get(index).hand.add(this.deck.draw());
 	}
 
-	private boolean checkBust(int i){
+	private int checkBust(int i){
+		int bustCount = 0;
 		if(i >= 0){
 			Player p = this.players.get(i);
 			ArrayList<Integer> vList = p.getValue();
-			int bustCount = 0;
 
 			for(int j = 0; j < vList.size(); j++){
 				if(vList.get(j) > 21){
@@ -200,48 +193,41 @@ public class Table {
 
 			if(bustCount == vList.size()){
 				System.out.println(p.name + " has busted.");
-				return true;
+				return 1;
 			}
-			return false;
+			return 0;
 		}else{
 			ArrayList<Integer> vList = this.dealer.getValue();
-			int bustCount = 0;
 
 			for(int j = 0; j < vList.size(); j++){
-				if(vList.get(j) > 21){
-					bustCount++;
-				}
+				if(vList.get(j) > 21) bustCount++;
 			}
-
-			if(bustCount == vList.size()){
-				return true;
-			}
-			return false;
+			if(bustCount == vList.size()) return vList.get(vList.size()-1);
+			return 0;
 		}
 	}
 
 	private int checkDone(int i){
+		int max = -1, min = 99;
+
 		if(i >= 0){
 			ArrayList<Integer> vList = this.players.get(i).getValue();
-			int max = -1, min = 99;
 
 			for(int j = 0; j < vList.size(); j++){
 				if(vList.get(j) < 22 && vList.get(j) > max) max = vList.get(j);
-				if(vList.get(j) < min) min = vList.get(j);
+				else if(vList.get(j) < min) min = vList.get(j);
 			}
 			if(max == -1) return min;
-			return max;
 		}else{
 			ArrayList<Integer> vList = this.dealer.getValue();
-			int max = -1;
 
 			for(int j = 0; j < vList.size(); j++){
 				if(vList.size() > 1){
 					if(vList.get(j) > 17 && vList.get(j) < 22 && vList.get(j) > max) max = vList.get(j);
 				}else if(vList.get(j) > 16 && vList.get(j) < 22 && vList.get(j) > max) max = vList.get(j);
 			}
-			return max;
 		}
+		return max;
 	}
 
 	private boolean checkBlackjack(int i){
@@ -259,45 +245,75 @@ public class Table {
 		int bet = 0;
 
 		for(int i = 0; i < this.numPlayers; i++){
-			if(this.players.get(i).chipCount < 1){
-				System.out.println(players.remove(i).name + " has run out of chips");
+			if(this.players.get(i).chipCount < 1 || this.players.get(i).chipCount < minBet){
+				System.out.println(players.get(i).name + " does not have enough chips to continue.");
 				this.numPlayers--;
+				this.players.remove(i);
 				i--;
 			}else{
 				while(true){
-					System.out.println(this.players.get(i).name + " place your bet. Current chip count: " + this.players.get(i).chipCount);
-					bet = input.nextInt();
-					if(bet > 0 && bet <= this.players.get(i).chipCount && bet >= this.minBet && bet <= this.maxBet){
-						this.players.get(i).currentBet = bet;
-						this.players.get(i).chipCount = this.players.get(i).chipCount - bet;
+					if(this.players.get(i).getClass() == (new BookAI()).getClass()){
+						System.out.println(this.players.get(i).name + " place your bet. Current chip count: " + this.players.get(i).chipCount);
+						System.out.println(minBet);
+
+						this.players.get(i).currentBet = minBet;
+						this.players.get(i).chipCount = this.players.get(i).chipCount - minBet;
 						break;
 					}else{
-						System.out.println("Please enter legal bet.");
+						System.out.println(this.players.get(i).name + " place your bet. Current chip count: " + this.players.get(i).chipCount);
+						bet = input.nextInt();
+						if(bet > 0 && bet <= this.players.get(i).chipCount && bet >= this.minBet && bet <= this.maxBet){
+							this.players.get(i).currentBet = bet;
+							this.players.get(i).chipCount = this.players.get(i).chipCount - bet;
+							break;
+						}else{
+							System.out.println("Please enter legal bet.");
+						}
 					}
 				}
 			}
 		}
 	}
 
-	private void payout(int i, boolean push){
+	private int payout(int i, int push, int value){
+		if(this.players.get(i).name.contains("_SPLIT")){
+			this.players.remove(i);
+			this.numPlayers--;
+			i = i-1;
+		}
+
 		if(this.betsEnabled){
-			if(push){
-				this.players.get(i).chipCount = this.players.get(i).chipCount + this.players.get(i).currentBet;
-				this.players.get(i).currentBet = 0;
-			}else{
+			if(push == 1){
 				this.players.get(i).chipCount = this.players.get(i).chipCount + this.players.get(i).currentBet*2;
 				this.players.get(i).currentBet = 0;
-			}
+				System.out.println(this.players.get(i).name + " wins with " + this.players.get(i).hand + " Value: " + value + " Chips: " + this.players.get(i).chipCount);
+			}else if(push == 2){
+				this.players.get(i).chipCount = this.players.get(i).chipCount + this.players.get(i).currentBet;
+				this.players.get(i).currentBet = 0;
+				System.out.println(this.players.get(i).name + " pushes with " + this.players.get(i).hand + " Value: " + value + " Chips: " + this.players.get(i).chipCount);
+			}else System.out.println(this.players.get(i).name + " loses with " + this.players.get(i).hand + " Value: " + value + " Chips: " + this.players.get(i).chipCount);
 		}
+		return i;
 	}
 
 	private void handleSplit(int i){
-		if(i == this.players.size()-1) this.players.add(new Player(this.players.get(i).name + "SPLIT"));
-		else this.players.add(i+1, new Player(this.players.get(i).name + "SPLIT"));
+		if(this.players.get(i).getClass() == (new BookAI()).getClass()){
+			if(i == this.numPlayers-1) this.players.add(new BookAI(this.players.get(i).name + "_SPLIT"));
+			else this.players.add(i+1, new BookAI(this.players.get(i).name + "_SPLIT"));
+		}else{
+			if(i == this.numPlayers-1) this.players.add(new Player(this.players.get(i).name + "_SPLIT"));
+			else this.players.add(i+1, new Player(this.players.get(i).name + "_SPLIT"));
+		}
 
-		this.players.get(i+1).hand.add(this.players.get(i+1).hand.remove(1));
+		this.players.get(i+1).hand.add(this.players.get(i).hand.remove(1));
 		this.players.get(i).hand.add(this.deck.draw());
 		this.players.get(i+1).hand.add(this.deck.draw());
+		this.numPlayers++;
+	}
+
+	public void removePlayer(int index){
+		this.players.remove(index);
+		this.numPlayers--;
 	}
 
 	public String toString(boolean first){

@@ -9,12 +9,17 @@ public class BookAI extends Player{
   private HashMap<String, HashMap> dMatrix = new HashMap<String, HashMap>();
 
   public BookAI (String name){
-    super(name + "AI");
+    super(name + "_AI");
     buildMatrix();
   }
 
   public BookAI (){
     super("");
+    buildMatrix();
+  }
+
+  public BookAI (String name, int chips){
+    super(name + "_AI", chips);
     buildMatrix();
   }
 
@@ -142,47 +147,44 @@ public class BookAI extends Player{
     }
 
     //Populate Pair Sub-matrix
-    for(int i = 2; i < 12; i++){
-      p.put(dCards[i-2], new HashMap<Integer, String>());
-      for(int j = 0; j < dCards.length; j++){
+    for(int i = 2; i < 11; i++){
+      p.put(i, new HashMap<Integer, String>());
+      for(int j = 2; j < 12; j++){
         switch(Integer.valueOf(i)){
     			case 2:
-            if(dCards[j] < 7) p.get(dCards[i-2]).put(dCards[j], "spl");
-            else p.get(dCards[i-2]).put(dCards[j], "h");
+            if(j < 7) p.get(i).put(j, "spl");
+            else p.get(i).put(j, "h");
             break;
     			case 3:
-            if(dCards[j] < 7) p.get(dCards[i-2]).put(dCards[j], "spl");
-            else p.get(dCards[i-2]).put(dCards[j], "h");
+            if(j < 7) p.get(i).put(j, "spl");
+            else p.get(i).put(j, "h");
             break;
     			case 4:
-            if(dCards[j] > 4 && dCards[j] < 7) p.get(dCards[i-2]).put(dCards[j], "spl");
-            else p.get(dCards[i-2]).put(dCards[j], "h");
+            if(j > 4 && j < 7) p.get(i).put(j, "spl");
+            else p.get(i).put(j, "h");
             break;
           case 5:
-            if(dCards[j] < 10) p.get(dCards[i-2]).put(dCards[j], "d");
-            else p.get(dCards[i-2]).put(dCards[j], "h");
+            if(j < 10) p.get(i).put(j, "d");
+            else p.get(i).put(j, "h");
             break;
           case 6:
-            if(dCards[j] < 7) p.get(dCards[i-2]).put(dCards[j], "spl");
-            else p.get(dCards[i-2]).put(dCards[j], "h");
+            if(j < 7) p.get(i).put(j, "spl");
+            else p.get(i).put(j, "h");
             break;
           case 7:
-            if(dCards[j] < 8) p.get(dCards[i-2]).put(dCards[j], "spl");
-            else if(dCards[j] > 8) p.get(dCards[i-2]).put(dCards[j], "h");
-            else p.get(dCards[i-2]).put(dCards[j], "s");
+            if(j < 8) p.get(i).put(j, "spl");
+            else if(j > 8) p.get(i).put(j, "h");
+            else p.get(i).put(j, "s");
             break;
           case 8:
-            p.get(dCards[i-2]).put(dCards[j], "spl");
+            p.get(i).put(j, "spl");
             break;
           case 9:
-            if(dCards[j] == 7 || dCards[j] > 9) p.get(dCards[i-2]).put(dCards[j], "s");
-            else p.get(dCards[i-2]).put(dCards[j], "spl");
+            if(j == 7 || j > 9) p.get(i).put(j, "s");
+            else p.get(i).put(j, "spl");
             break;
           case 10:
-            p.get(dCards[i-2]).put(dCards[j], "s");
-            break;
-          case 11:
-            p.get(dCards[i-2]).put(dCards[j], "spl");
+            p.get(i).put(j, "s");
             break;
     		}
       }
