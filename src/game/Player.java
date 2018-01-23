@@ -22,7 +22,6 @@ public class Player {
 	public ArrayList<Integer> getValue(){
 		boolean flag = false;
 		int temp = 0, aCount = 0;
-		ArrayList<Integer> ai = new ArrayList<>();
 		ArrayList<Integer> handValue = new ArrayList<>();
 		handValue.add(0);
 

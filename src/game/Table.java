@@ -47,15 +47,11 @@ public class Table {
 				}
 			}
 			this.dealer.hand.add(this.deck.draw());
-		}else{
-			throw new EndOfShoeException("End of Shoe");
-		}
+		}else throw new EndOfShoeException("End of Shoe");
 	}
 
 	public void clear(){
-		for(int i = 0; i < players.size(); i++){
-			players.get(i).clearHand();
-		}
+		for(int i = 0; i < players.size(); i++) players.get(i).clearHand();
 		dealer.clearHand();
 	}
 
@@ -92,9 +88,9 @@ public class Table {
 					if(vList.size() > 1){
 						System.out.print(p + " Value: ");
 						for(int k = 0; k < vList.size()-1; k++) System.out.print(vList.get(k) + " or ");
-						System.out.println(vList.get(vList.size() - 1) + ": h, s");
+						System.out.println(vList.get(vList.size() - 1) + ": h, s, d, spl");
 					}
-					else System.out.println(p + " Value: " + vList.get(0) + ": h, s");
+					else System.out.println(p + " Value: " + vList.get(0) + ": h, s, d, spl");
 
 					while(true){
 						if(this.players.get(i).getClass() == (new BookAI()).getClass()){
@@ -104,22 +100,33 @@ public class Table {
 						}
 						else choice = input.next();
 
-						if(choice.equals("h") || choice.equals("d")){
+						if(choice.equals("h") || (choice.equals("d") && maxBet == 0)){
 							hit(i);
-							if(checkBust(i)){
-								stay = true;
-							}
+							if(checkBust(i)) stay = true;
 							break;
 						}else if(choice.equals("s")){
 							stay = true;
 							break;
-						}else{
-							stay = true;
-							System.out.println("SPLIT");
-							break;
-						}
+						}else if(p.hand.size() < 3){
+							if(choice.equals("d") && maxBet != 0){
+								if(p.chipCount >= p.currentBet){
+									hit(i);
+									p.currentBet = p.currentBet*2;
+								}else{
+									System.out.println("Not enough chips to double");
+									continue;
+								}
+								if(checkBust(i)) stay = true;
+								break;
+							}else if(choice.equals("spl") && p.hand.get(0).number == p.hand.get(1).number){
+								if(p.chipCount >= p.currentBet) {
+									handleSplit(i);
+									p.currentBet = p.currentBet*2;
+									break;
+								}else System.out.println("Not enough chips to split");
+							}else System.out.println("Cards must be equal to split");
+						}else System.out.println("Not a legal input.");
 					}
-				}
 
 				vList = p.getValue();
 				if(vList.size() > 1){
@@ -155,8 +162,8 @@ public class Table {
 			if(dValue > 21) System.out.println("\nDealer Busts!");
 			else System.out.println("");
 
-			System.out.println("-----------------------------------");
 			//Check winning hands
+			System.out.println("-----------------------------------");
 			for(int i = 0; i < this.numPlayers; i++){
 				p = this.players.get(i);
 				value = checkDone(i);
@@ -284,6 +291,14 @@ public class Table {
 		}
 	}
 
+	private void handleSplit(int i){
+		if(i == this.players.size()-1) this.players.add(new Player(this.players.get(i).name + "SPLIT"));
+		else this.players.add(i+1, new Player(this.players.get(i).name + "SPLIT"));
+
+		this.players.get(i+1).hand.add(this.players.get(i+1).hand.remove(1));
+		this.players.get(i).hand.add(this.deck.draw());
+		this.players.get(i+1).hand.add(this.deck.draw());
+	}
 
 	public String toString(boolean first){
 		if(first){
