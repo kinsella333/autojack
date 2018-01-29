@@ -3,6 +3,8 @@ package game;
 import java.util.ArrayList;
 import util.Card;
 import java.util.HashMap;
+import java.util.Random;
+
 
 public class BookAI extends Player{
 
@@ -215,4 +217,19 @@ public class BookAI extends Player{
 		if(max == -1) return min;
 		return max;
 	}
+
+  public boolean placeBet(int maxBet, int minBet){
+    Random rand = new Random();
+    int bet;
+
+    System.out.println(this.name + " place your bet. Current chip count: " + this.chipCount);
+
+    if (maxBet > this.chipCount/2) bet = rand.nextInt(this.chipCount/2) + minBet;
+    else bet = rand.nextInt(maxBet) + minBet;
+    System.out.println(bet);
+
+    this.currentBet = bet;
+    this.chipCount = this.chipCount - bet;
+    return true;
+  }
 }

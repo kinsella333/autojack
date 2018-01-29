@@ -242,34 +242,21 @@ public class Table {
 	}
 
 	public void takeBets(Scanner input){
-		int bet = 0;
+		boolean done;
 
 		for(int i = 0; i < this.numPlayers; i++){
+			done = false;
+
 			if(this.players.get(i).chipCount < 1 || this.players.get(i).chipCount < minBet){
 				System.out.println(players.get(i).name + " does not have enough chips to continue.");
 				this.numPlayers--;
 				this.players.remove(i);
 				i--;
 			}else{
-				while(true){
-					if(this.players.get(i).getClass() == (new BookAI()).getClass()){
-						System.out.println(this.players.get(i).name + " place your bet. Current chip count: " + this.players.get(i).chipCount);
-						System.out.println(minBet);
-
-						this.players.get(i).currentBet = minBet;
-						this.players.get(i).chipCount = this.players.get(i).chipCount - minBet;
-						break;
-					}else{
-						System.out.println(this.players.get(i).name + " place your bet. Current chip count: " + this.players.get(i).chipCount);
-						bet = input.nextInt();
-						if(bet > 0 && bet <= this.players.get(i).chipCount && bet >= this.minBet && bet <= this.maxBet){
-							this.players.get(i).currentBet = bet;
-							this.players.get(i).chipCount = this.players.get(i).chipCount - bet;
-							break;
-						}else{
-							System.out.println("Please enter legal bet.");
-						}
-					}
+				while(!done){
+					if(this.players.get(i).getClass() == (new BookAI()).getClass()) done = ((BookAI)this.players.get(i)).placeBet(maxBet, minBet);
+					else if(this.players.get(i).getClass() == (new CounterAI()).getClass()) done = ((CounterAI)this.players.get(i)).placeBet(this.numDecks, maxBet, minBet);
+					else done = this.players.get(i).placeBet(input, maxBet, minBet);
 				}
 			}
 		}

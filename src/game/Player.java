@@ -2,6 +2,8 @@ package game;
 
 import java.util.ArrayList;
 import util.Card;
+import java.util.Scanner;
+
 
 public class Player {
 	public ArrayList<Card> hand;
@@ -56,6 +58,22 @@ public class Player {
 		}
 
 		return handValue;
+	}
+
+	public boolean placeBet(Scanner input, int maxBet, int minBet){
+		int bet;
+		System.out.println(this.name + " place your bet. Current chip count: " + this.chipCount);
+
+		bet = input.nextInt();
+		if(bet > 0 && bet <= this.chipCount && bet >= minBet && bet <= maxBet){
+			this.currentBet = bet;
+			this.chipCount = this.chipCount - bet;
+		}else{
+			System.out.println("Please enter legal bet.");
+			return false;
+		}
+
+		return true;
 	}
 
 	public String toString(){
