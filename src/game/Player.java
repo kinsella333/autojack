@@ -64,7 +64,12 @@ public class Player {
 		int bet;
 		System.out.println(this.name + " place your bet. Current chip count: " + this.chipCount);
 
-		bet = input.nextInt();
+		try{bet = input.nextInt();}
+		catch(Exception e){
+			input.next();
+			return false;
+		}
+
 		if(bet > 0 && bet <= this.chipCount && bet >= minBet && bet <= maxBet){
 			this.currentBet = bet;
 			this.chipCount = this.chipCount - bet;

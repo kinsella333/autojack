@@ -8,21 +8,21 @@ import java.util.Random;
 
 public class BookAI extends Player{
 
-  private HashMap<String, HashMap> dMatrix = new HashMap<String, HashMap>();
+  protected HashMap<String, HashMap> dMatrix;
 
   public BookAI (String name){
     super(name + "_AI");
-    buildMatrix();
+    this.dMatrix = buildMatrix();
   }
 
   public BookAI (){
     super("");
-    buildMatrix();
+    this.dMatrix = buildMatrix();
   }
 
   public BookAI (String name, int chips){
     super(name + "_AI", chips);
-    buildMatrix();
+    this.dMatrix = buildMatrix();
   }
 
   public String decide(Card dCard, ArrayList<Card> hand){
@@ -44,11 +44,12 @@ public class BookAI extends Player{
     }
   }
 
-  private void buildMatrix(){
+  private HashMap<String, HashMap> buildMatrix(){
     int[] dCards = {2, 3, 4, 5, 5, 6, 7, 8, 9, 10, 11};
     HashMap<Integer, HashMap<Integer, String>> v = new HashMap<Integer, HashMap<Integer, String>>();
     HashMap<Integer, HashMap<Integer, String>> a = new HashMap<Integer, HashMap<Integer, String>>();
     HashMap<Integer, HashMap<Integer, String>> p = new HashMap<Integer, HashMap<Integer, String>>();
+    HashMap<String, HashMap> fin = new HashMap<String, HashMap>();
     String t = "";
 
     //Populate Values Sub-matrix
@@ -192,12 +193,13 @@ public class BookAI extends Player{
       }
     }
 
-    this.dMatrix.put("Values", v);
-    this.dMatrix.put("Ace", a);
-    this.dMatrix.put("Pairs", p);
+    fin.put("Values", v);
+    fin.put("Ace", a);
+    fin.put("Pairs", p);
+    return fin;
   }
 
-  private int containsAce(ArrayList<Card> hand){
+  protected int containsAce(ArrayList<Card> hand){
     for(int i = 0; i < hand.size(); i++){
       if(hand.get(i).value == 11){
         if(i == 0) return 1;
@@ -207,7 +209,7 @@ public class BookAI extends Player{
     return -1;
   }
 
-  private int checkDone(ArrayList<Integer> vList){
+  protected int checkDone(ArrayList<Integer> vList){
 		int max = -1, min = 99;
 
 		for(int j = 0; j < vList.size(); j++){

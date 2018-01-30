@@ -28,6 +28,7 @@ public class Game{
         game.players = new ArrayList<Player>();
     		game.players.add(new Player("Joe"));
     		game.players.add(new BookAI("Cole"));
+        game.players.add(new CounterAI("Joker"));
 
     		game.table = new Table(1, 100, 5, game.players);
         game.playGame(choice_2, input);

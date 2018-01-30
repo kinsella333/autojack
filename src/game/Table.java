@@ -96,10 +96,14 @@ public class Table {
 							BookAI b = (BookAI)this.players.get(i);
 							choice = b.decide(this.dealer.showCard(), b.hand);
 							System.out.println(choice);
+						}else if(this.players.get(i).getClass() == (new CounterAI()).getClass()){
+							CounterAI c = (CounterAI)this.players.get(i);
+							choice = c.decide(this.players, this.dealer.showCard(), c.hand, this.numDecks);
+							System.out.println(choice);
 						}
 						else choice = input.next();
 
-						if(choice.equals("h") || (choice.equals("d") && maxBet == 0)){
+						if(choice.equals("h") || (choice.equals("d") && maxBet == 0) || (choice.equals("d") && this.players.get(i).hand.size() > 2)){
 							hit(i);
 							if(checkBust(i) == 1) stay = true;
 							break;
