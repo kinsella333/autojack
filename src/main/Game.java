@@ -123,7 +123,7 @@ public class Game{
     int chips;
 
     System.out.println("Create Player.\n-----------------");
-    System.out.println("h.Human\nc.Computer?");
+    System.out.println("h.Human\nc.Computer");
 
     while(!done){
       choice = input.next();
@@ -145,7 +145,7 @@ public class Game{
           done = true;
           break;
         case "c":
-          System.out.println("Name?");
+          System.out.println("Name:");
           name = input.next();
 
           System.out.println("Number of chips?");
@@ -156,8 +156,20 @@ public class Game{
               else break;
             }catch(Exception e){System.out.println("\nPlease provide a numeric value.");}
           }
+          
+          while(true){
+        	  System.out.println("b.By the Book\nc.Cheater");
+              String comp_type = input.next();
+              if (comp_type.equals("b")){
+            	  p = new BookAI(name, chips);
+            	  break;
+              }
+              else if (comp_type.equals("c")){
+            	  p = new CounterAI(name, chips);
+            	  break;
+              }
+          }
 
-          p = new BookAI(name, chips);
           done = true;
           break;
         default:
