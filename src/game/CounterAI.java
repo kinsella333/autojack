@@ -65,6 +65,8 @@ public class CounterAI extends BookAI{
     System.out.println(this.name + " place your bet. Current chip count: " + this.chipCount);
 
     if(count/numDecks >= 5){
+      if (minBet == this.chipCount) max = minBet;
+      
       if(minBet > this.chipCount/2 - this.chipCount/4) min = minBet;
       else min = this.chipCount/2 - this.chipCount/4;
 

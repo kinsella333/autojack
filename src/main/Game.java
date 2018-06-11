@@ -25,10 +25,10 @@ public class Game{
       }else if(choice_1.equals("r")){
         game.playGame(choice_2, input);
       }else if(choice_1.equals("q")){
-        game.players = new ArrayList<Player>();
+    	  	game.players = new ArrayList<Player>();
     		game.players.add(new Player("Joe"));
     		game.players.add(new BookAI("Cole"));
-        game.players.add(new CounterAI("Joker"));
+    		game.players.add(new CounterAI("Joker"));
 
     		game.table = new Table(1, 100, 5, game.players);
         game.playGame(choice_2, input);

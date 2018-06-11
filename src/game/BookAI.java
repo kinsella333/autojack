@@ -225,9 +225,11 @@ public class BookAI extends Player{
     int bet;
 
     System.out.println(this.name + " place your bet. Current chip count: " + this.chipCount);
-
-    if (maxBet > this.chipCount/2) bet = rand.nextInt(this.chipCount/2) + minBet;
-    else bet = rand.nextInt(maxBet) + minBet;
+    if (minBet == this.chipCount) bet = minBet;
+    else{
+	    if (maxBet > this.chipCount/2) bet = rand.nextInt(this.chipCount/2) + minBet;
+	    else bet = rand.nextInt(maxBet) + minBet;
+    }
     System.out.println(bet);
 
     this.currentBet = bet;
