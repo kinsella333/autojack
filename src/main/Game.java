@@ -25,10 +25,10 @@ public class Game{
       }else if(choice_1.equals("r")){
         game.playGame(choice_2, input, false);
       }else if(choice_1.equals("q")){
-        game.players = new ArrayList<Player>();
+    	  	game.players = new ArrayList<Player>();
     		game.players.add(new Player("Joe"));
     		game.players.add(new BookAI("Cole"));
-        game.players.add(new CounterAI("Joker"));
+    		game.players.add(new CounterAI("Joker"));
 
     		game.table = new Table(1, 100, 5, game.players);
         game.playGame(choice_2, input, false);
@@ -170,7 +170,19 @@ public class Game{
             }catch(Exception e){System.out.println("\nPlease provide a numeric value.");}
           }
 
-          p = new BookAI(name, chips);
+          while(true){
+        	  System.out.println("b.By the Book\nc.Cheater");
+              String comp_type = input.next();
+              if (comp_type.equals("b")){
+            	  p = new BookAI(name, chips);
+            	  break;
+              }
+              else if (comp_type.equals("c")){
+            	  p = new CounterAI(name, chips);
+            	  break;
+              }
+          }
+
           done = true;
           break;
         case "c":

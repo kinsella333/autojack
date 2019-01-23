@@ -124,8 +124,8 @@ public class Table {
 							if(choice.equals("d") && maxBet != 0){
 								if(p.chipCount >= p.currentBet){
 									hit(i);
-									this.players.get(i).currentBet = p.currentBet*2;
 									this.players.get(i).chipCount = this.players.get(i).chipCount - p.currentBet;
+									this.players.get(i).currentBet = p.currentBet*2;
 									stay = true;
 								}else{
 									System.out.println("Not enough chips to double");
@@ -136,6 +136,8 @@ public class Table {
 							}else if(choice.equals("spl") && p.hand.get(0).number == p.hand.get(1).number){
 								if(p.chipCount >= p.currentBet) {
 									handleSplit(i);
+									
+									this.players.get(i).chipCount -= p.currentBet;
 									this.players.get(i).currentBet = p.currentBet*2;
 									break;
 								}else System.out.println("Not enough chips to split");
@@ -323,6 +325,9 @@ public class Table {
 		if(this.players.get(i).getClass() == (new BookAI()).getClass()){
 			if(i == this.numPlayers-1) this.players.add(new BookAI(this.players.get(i).name + "_SPLIT"));
 			else this.players.add(i+1, new BookAI(this.players.get(i).name + "_SPLIT"));
+		}else if(this.players.get(i).getClass() == (new CounterAI()).getClass()){
+			if(i == this.numPlayers-1) this.players.add(new CounterAI(this.players.get(i).name + "_SPLIT"));
+			else this.players.add(i+1, new CounterAI(this.players.get(i).name + "_SPLIT"));
 		}else{
 			if(i == this.numPlayers-1) this.players.add(new Player(this.players.get(i).name + "_SPLIT"));
 			else this.players.add(i+1, new Player(this.players.get(i).name + "_SPLIT"));
