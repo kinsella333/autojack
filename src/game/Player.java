@@ -60,7 +60,7 @@ public class Player {
 		return handValue;
 	}
 
-	public boolean placeBet(Scanner input, int maxBet, int minBet){
+	public boolean placeBet(Scanner input, int maxBet, int minBet, boolean auto){
 		int bet;
 		System.out.println(this.name + " place your bet. Current chip count: " + this.chipCount);
 

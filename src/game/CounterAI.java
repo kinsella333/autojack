@@ -12,13 +12,11 @@ public class CounterAI extends BookAI{
 
   public CounterAI (String name){
     super(name + "_McCheaterpants");
-    // this.dMatrix = buildMatrix();
     count = 0;
   }
 
   public CounterAI (){
     super("");
-    // this.dMatrix = buildMatrix();
     count = 0;
   }
 
@@ -59,10 +57,12 @@ public class CounterAI extends BookAI{
 
   }
 
-  public boolean placeBet(int numDecks, int maxBet, int minBet){
+  public boolean placeBet(int numDecks, int maxBet, int minBet, boolean auto){
     Random rand = new Random();
     int bet, max, min;
-    System.out.println(this.name + " place your bet. Current chip count: " + this.chipCount);
+    if(!auto){
+      System.out.println(this.name + " place your bet. Current chip count: " + this.chipCount);
+    }
 
     if(count/numDecks >= 5){
       if(minBet > this.chipCount/2 - this.chipCount/4) min = minBet;
@@ -84,7 +84,7 @@ public class CounterAI extends BookAI{
     }
 
     bet = rand.nextInt(max) + min;
-    System.out.println(bet);
+    if(!auto) System.out.println(bet);
 
     this.currentBet = bet;
     this.chipCount = this.chipCount - bet;

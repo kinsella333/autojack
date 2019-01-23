@@ -30,7 +30,7 @@ public class BookAI extends Player{
 
     if(hand.size() < 3 && (index = containsAce(hand)) >= 0){
       return ((HashMap<Integer, String>)((HashMap<Integer, HashMap>)dMatrix.get("Ace")).get(hand.get(index).value)).get(dCard.value);
-    }else if(hand.size() < 3 && hand.get(0).number == hand.get(1).number){
+    }else if(hand.size() == 2 && hand.get(0).number == hand.get(1).number){
       return ((HashMap<Integer, String>)((HashMap<Integer, HashMap>)dMatrix.get("Pairs")).get(hand.get(1).value)).get(dCard.value);
     }else{
       Player p = new Player("T");
@@ -220,15 +220,18 @@ public class BookAI extends Player{
 		return max;
 	}
 
-  public boolean placeBet(int maxBet, int minBet){
+  public boolean placeBet(int maxBet, int minBet, boolean auto){
     Random rand = new Random();
     int bet;
 
-    System.out.println(this.name + " place your bet. Current chip count: " + this.chipCount);
+    if(!auto){
+      System.out.println(this.name + " place your bet. Current chip count: " + this.chipCount);
+    }
 
-    if (maxBet > this.chipCount/2) bet = rand.nextInt(this.chipCount/2) + minBet;
+    if(minBet == this.chipCount) bet = minBet;
+    else if (maxBet > this.chipCount/2) bet = rand.nextInt(this.chipCount/2) + minBet;
     else bet = rand.nextInt(maxBet) + minBet;
-    System.out.println(bet);
+    if(!auto) System.out.println(bet);
 
     this.currentBet = bet;
     this.chipCount = this.chipCount - bet;

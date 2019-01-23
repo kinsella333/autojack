@@ -21,9 +21,9 @@ public class Game{
       if(choice_1.equals("s")){
         if((game.players = game.playersMenu(input)) == null) continue;
         game.table = game.tableMenu(input);
-        game.playGame(choice_2, input);
+        game.playGame(choice_2, input, false);
       }else if(choice_1.equals("r")){
-        game.playGame(choice_2, input);
+        game.playGame(choice_2, input, false);
       }else if(choice_1.equals("q")){
         game.players = new ArrayList<Player>();
     		game.players.add(new Player("Joe"));
@@ -31,7 +31,14 @@ public class Game{
         game.players.add(new CounterAI("Joker"));
 
     		game.table = new Table(1, 100, 5, game.players);
-        game.playGame(choice_2, input);
+        game.playGame(choice_2, input, false);
+      }else if(choice_1.equals("a")){
+        game.players = new ArrayList<Player>();
+    		game.players.add(new BookAI("Cole"));
+        game.players.add(new CounterAI("Joker"));
+
+        game.table = new Table(1, 100, 5, game.players);
+        game.playGame(choice_2, input, true);
       }
     }
 		input.close();
@@ -44,6 +51,7 @@ public class Game{
     if(this.table != null) System.out.println("r. Resume Game");
     System.out.println("s. Start Game");
     System.out.println("q. Quick Start");
+    System.out.println("a. Auto Run");
     System.out.println("e. Exit");
 
     while(true){
@@ -59,6 +67,8 @@ public class Game{
           return mainMenu(input);
         case "q":
           return choice;
+        case "a":
+          return choice;
         default:
           System.out.println("Please enter one of the options.");
           input.nextLine();
@@ -66,21 +76,24 @@ public class Game{
 		}
   }
 
-  private void playGame(String choice_2, Scanner input){
+  private void playGame(String choice_2, Scanner input, boolean auto){
     while(choice_2.equals("c")){
       try {
-        table.takeBets(input);
+        table.takeBets(input, auto);
         table.deal();
-
-        System.out.println(table.toString(true));
-        table.evaluate(input);
-      }catch(EndOfShoeException e){
+        if(!auto){
+          System.out.println(table.toString(true));
+        }
+        table.evaluate(input, auto);
+      }catch(Exception e){
         System.out.println("End of Shoe, shuffling.");
         table.shuffleDeck();
       }
 
       table.clear();
-      choice_2 = continuePlay(input);
+      if(!auto){
+        choice_2 = continuePlay(input);
+      }
     }
   }
 
@@ -123,7 +136,7 @@ public class Game{
     int chips;
 
     System.out.println("Create Player.\n-----------------");
-    System.out.println("h.Human\nc.Computer?");
+    System.out.println("h.Human\nb.Book Computer\nc.Cheater?");
 
     while(!done){
       choice = input.next();
@@ -144,7 +157,7 @@ public class Game{
           p = new Player(name, chips);
           done = true;
           break;
-        case "c":
+        case "b":
           System.out.println("Name?");
           name = input.next();
 
@@ -158,6 +171,22 @@ public class Game{
           }
 
           p = new BookAI(name, chips);
+          done = true;
+          break;
+        case "c":
+          System.out.println("Name?");
+          name = input.next();
+
+          System.out.println("Number of chips?");
+          while(true){
+            try{
+              chips = input.nextInt();
+              if(chips < 0 || chips > 999999999) System.out.println("\n" + chips + " is not a valid number of chips.");
+              else break;
+            }catch(Exception e){System.out.println("\nPlease provide a numeric value.");}
+          }
+
+          p = new CounterAI(name, chips);
           done = true;
           break;
         default:

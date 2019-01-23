@@ -3,6 +3,7 @@ package game;
 import java.util.ArrayList;
 import java.util.Scanner;
 import util.*;
+import java.util.concurrent.TimeUnit;
 
 public class Table {
 	public ArrayList<Player> players;
@@ -58,15 +59,16 @@ public class Table {
 		this.deck = new Deck(this.numDecks);
 	}
 
-	public void evaluate(Scanner input){
+	public void evaluate(Scanner input, boolean auto) throws InterruptedException{
 		String choice = "";
 		int value = 0, dValue = 1000;
 		Player p;
 		ArrayList<Integer> vList;
 
 		//Check Dealer
-		if(checkBlackjack(-1)){
+		if(checkBlackjack(-1) && !auto){
 			System.out.println("Dealer has 21");
+			TimeUnit.SECONDS.sleep(1);
 		}else{
 			//Loop through each player
 			for(int i = 0; i < this.numPlayers; i++){
@@ -77,6 +79,7 @@ public class Table {
 
 				if(checkBlackjack(i)){
 					System.out.println(players.get(i).name + " got a Blackjack!");
+					TimeUnit.SECONDS.sleep(1);
 					continue;
 				}
 
@@ -84,27 +87,34 @@ public class Table {
 				while(!stay){
 					vList = p.getValue();
 
-					if(vList.size() > 1){
-						System.out.print(p + " Value: ");
-						for(int k = 0; k < vList.size()-1; k++) System.out.print(vList.get(k) + " or ");
-						System.out.println(vList.get(vList.size() - 1) + ": h, s, d, spl");
+					if(!auto){
+						if(vList.size() > 1){
+							System.out.print(p + " Value: ");
+							for(int k = 0; k < vList.size()-1; k++) System.out.print(vList.get(k) + " or ");
+							System.out.println(vList.get(vList.size() - 1) + ": h, s, d, spl");
+						}
+						else System.out.println(p + " Value: " + vList.get(0) + ": h, s, d, spl");
 					}
-					else System.out.println(p + " Value: " + vList.get(0) + ": h, s, d, spl");
 
 					while(true){
 						if(this.players.get(i).getClass() == (new BookAI()).getClass()){
 							BookAI b = (BookAI)this.players.get(i);
 							choice = b.decide(this.dealer.showCard(), b.hand);
+							TimeUnit.SECONDS.sleep(1);
 							System.out.println(choice);
 						}else if(this.players.get(i).getClass() == (new CounterAI()).getClass()){
 							CounterAI c = (CounterAI)this.players.get(i);
 							choice = c.decide(this.players, this.dealer.showCard(), c.hand, this.numDecks);
+							TimeUnit.SECONDS.sleep(1);
 							System.out.println(choice);
 						}
 						else choice = input.next();
 
+						TimeUnit.SECONDS.sleep(1);
+
 						if(choice.equals("h") || (choice.equals("d") && maxBet == 0) || (choice.equals("d") && this.players.get(i).hand.size() > 2)){
 							hit(i);
+							TimeUnit.SECONDS.sleep(1);
 							if(checkBust(i) == 1) stay = true;
 							break;
 						}else if(choice.equals("s")){
@@ -134,40 +144,61 @@ public class Table {
 					}
 			 }
 			 vList = p.getValue();
-			 if(vList.size() > 1){
-				 System.out.print(p + " Value: ");
-				 for(int k = 0; k < vList.size()-1; k++) System.out.print(vList.get(k) + " or ");
-				 System.out.println(vList.get(vList.size() - 1));
-			 }else System.out.println(p + " Value: " + vList.get(0));
+
+			 if(!auto){
+				 if(vList.size() > 1){
+					 System.out.print(p + " Value: ");
+					 for(int k = 0; k < vList.size()-1; k++) System.out.print(vList.get(k) + " or ");
+					 System.out.println(vList.get(vList.size() - 1));
+				 }else System.out.println(p + " Value: " + vList.get(0));
+			 }
+				System.out.println();
 		 }
 
 		 //Check dealer and hit hand
 			ArrayList<Integer> dList = this.dealer.getValue();
-			if(dList.size() > 1){
-				System.out.print("\n" + this.dealer.toString(false) + " Value: ");
-				for(int k = 0; k < dList.size()-1; k++) System.out.print(dList.get(k) + " or ");
-				System.out.println(dList.get(dList.size() - 1));
+			if(!auto){
+				TimeUnit.SECONDS.sleep(1);
+				if(dList.size() > 1){
+					System.out.print("\n" + this.dealer.toString(false) + " Value: ");
+					for(int k = 0; k < dList.size()-1; k++) System.out.print(dList.get(k) + " or ");
+					TimeUnit.SECONDS.sleep(1);
+					System.out.println(dList.get(dList.size() - 1));
+				}
+				else System.out.println("\n" + this.dealer.toString(false) + " Value: " + dList.get(0));
 			}
-			else System.out.println("\n" + this.dealer.toString(false) + " Value: " + dList.get(0));
 
 			while((dValue = checkBust(-1)) < 22){
 
 				if((dValue = checkDone(-1)) > 2) break;
+				TimeUnit.SECONDS.sleep(1);
 				dealer.hand.add(this.deck.draw());
 
 				dList = this.dealer.getValue();
-				if(dList.size() > 1){
-					System.out.print(this.dealer.toString(false) + " Value: ");
-					for(int i = 0; i < dList.size()-1; i++) System.out.print(dList.get(i) + " or ");
-					System.out.println(dList.get(dList.size() - 1));
-				}else System.out.println(this.dealer.toString(false) + " Value: " + dList.get(0));
+				if(!auto){
+					if(dList.size() > 1){
+						System.out.print(this.dealer.toString(false) + " Value: ");
+						for(int i = 0; i < dList.size()-1; i++) System.out.print(dList.get(i) + " or ");
+						System.out.println(dList.get(dList.size() - 1));
+					}else System.out.println(this.dealer.toString(false) + " Value: " + dList.get(0));
+				}
 			}
 
-			if(dValue > 21) System.out.println("\nDealer Busts!");
-			else System.out.println("");
+			if(!auto){
+				TimeUnit.SECONDS.sleep(1);
+				if(dValue > 21) System.out.println("\nDealer Busts!");
+				else System.out.println("");
+			}
 
 			//Check winning hands
 			System.out.println("-----------------------------------");
+
+			if(dList.size() > 1){
+				System.out.print(this.dealer.toString(false) + " Value: ");
+				for(int i = 0; i < dList.size()-1; i++) System.out.print(dList.get(i) + " or ");
+				System.out.println(dList.get(dList.size() - 1));
+			}else System.out.println(this.dealer.toString(false) + " Value: " + dList.get(0));
+
 			for(int i = 0; i < this.numPlayers; i++){
 				value = checkDone(i);
 
@@ -245,7 +276,7 @@ public class Table {
 		return false;
 	}
 
-	public void takeBets(Scanner input){
+	public void takeBets(Scanner input, boolean auto) throws InterruptedException{
 		boolean done;
 
 		for(int i = 0; i < this.numPlayers; i++){
@@ -258,9 +289,10 @@ public class Table {
 				i--;
 			}else{
 				while(!done){
-					if(this.players.get(i).getClass() == (new BookAI()).getClass()) done = ((BookAI)this.players.get(i)).placeBet(maxBet, minBet);
-					else if(this.players.get(i).getClass() == (new CounterAI()).getClass()) done = ((CounterAI)this.players.get(i)).placeBet(this.numDecks, maxBet, minBet);
-					else done = this.players.get(i).placeBet(input, maxBet, minBet);
+					TimeUnit.SECONDS.sleep(1);
+					if(this.players.get(i).getClass() == (new BookAI()).getClass()) done = ((BookAI)this.players.get(i)).placeBet(maxBet, minBet, auto);
+					else if(this.players.get(i).getClass() == (new CounterAI()).getClass()) done = ((CounterAI)this.players.get(i)).placeBet(this.numDecks, maxBet, minBet, auto);
+					else done = this.players.get(i).placeBet(input, maxBet, minBet, auto);
 				}
 			}
 		}
